@@ -1,0 +1,28 @@
+{
+  "name": "Hack 2021 GraphQL Network Inspector",
+  "version": "{{package_version}}",
+  "description": "Simple and clean network inspector for GraphQL with mock support",
+  "icons": {
+    "128": "icon.png"
+  },
+  "manifest_version": 3,
+  "permissions": ["storage"],
+  "background": {
+     "service_worker": "./content/background.js"
+  },
+  "content_scripts" : [{
+      "matches": ["*://*/*"],
+      "js" : ["./content/contentScript.js"],
+      "run_at":"document_start"
+  }],
+  "externally_connectable": {
+    "matches": ["*://*.rubrik-lab.com/*", "*://*.rubrik.com/*", "*://localhost/*"]
+  },
+  "web_accessible_resources": [{
+    "resources": [
+      "content/inject.js"
+    ],
+    "matches": ["*://*/*"]
+  }],
+  "devtools_page": "devtools/devtools.html"
+}
