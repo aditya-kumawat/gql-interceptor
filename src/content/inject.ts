@@ -1,6 +1,6 @@
 const _fetch = window.fetch;
 // The ID of the extension we want to talk to.
-var interceptorExtensionId = "jjekiddkagmapkekppmhfknafnjlddpl";
+var interceptorExtensionId = "fldngcpeogcbnnniebconffbcflpebck";
 
 window.fetch = (...args) => {
   if (args.length > 1) {

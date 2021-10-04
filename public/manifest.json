@@ -1,5 +1,6 @@
 {
   "name": "Hack 2021 GraphQL Network Inspector",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApVcim9U/czrupq4sZeFEvuE9N6i0RHQDl9cMwu8SQwB9Yuk3hN0Wxtpo91ugUKy/nB5hF/ul0BRmlzv483MX8nBdmMeiL8FPiLHLyrgFDN/lzpFn0hjvQturrlGc1K+hJ74G5+tzDkBmMTYE9VLfDDngxw/NK32HthYtf/Y9UgJ+cSF1GdZH9QdFuSkREj+Ja4OH9xGLAmGrWpRsbbJ0cGMTCSBH8z0b6WXFuTQ1AcDDZIXwgL9EiAZuNYdV+m7sIWSpHC5t8LZ9w62QLEE5DUtS7mupgvzfGugE5eoRPig1nhZ04MUaSPVcXh4LoaC5qY2ktWczrk9H+nPoX9vyCwIDAQAB",
   "version": "{{package_version}}",
   "description": "Simple and clean network inspector for GraphQL with mock support",
   "icons": {
