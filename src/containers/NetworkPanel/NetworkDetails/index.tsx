@@ -57,7 +57,13 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
         {
           id: "mock-data",
           title: "Mock",
-          component: <NetworkMock data={data} />,
+          component: (
+            <NetworkMock
+              response={responseBody}
+              requests={requestBody}
+              data={data}
+            />
+          ),
         },
       ]}
     />

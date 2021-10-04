@@ -1,3 +1,5 @@
+import { IInterceptorPayload } from "@/extension.utils";
+
 console.log("Starting!");
 
 const injectScripts = (callback: () => void) => {
@@ -18,5 +20,28 @@ const injectScripts = (callback: () => void) => {
 injectScripts(() => {
   console.log("Scripts injected");
 });
-
+/**
+const bar: IInterceptorPayload = {
+  request: {
+    appendHeaders: {
+      mySpecificHeader: "mySpecificValue",
+    },
+  },
+  response: {
+    patchPayload: {
+      data: {
+        globalSla: {
+          name: "My Mocked Name",
+        },
+      },
+    },
+  },
+};
+chrome.storage.local.set(
+  { [`${window.location.origin}:SLADetailsQuery:*`]: bar },
+  () => {
+    console.log("Saved the settings for", window.location.origin);
+  }
+);
+ */
 export {};

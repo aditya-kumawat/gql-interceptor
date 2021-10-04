@@ -3,6 +3,11 @@ import { mockRequests } from "../mocks/mock-requests";
 let removeListeners: Record<string, () => void> = {};
 
 export const mockChrome = {
+  storage: {
+    local: {
+      set: (payload, cb) => cb?.(),
+    },
+  },
   devtools: {
     panels: {
       themeName: "dark",
