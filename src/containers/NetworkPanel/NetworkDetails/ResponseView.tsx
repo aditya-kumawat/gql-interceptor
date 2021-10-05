@@ -5,10 +5,11 @@ import { CopyButton } from "../../../components/CopyButton";
 
 interface IResponseViewProps {
   response?: string;
+  mockButton: React.ReactNode;
 }
 
 export const ResponseView = (props: IResponseViewProps) => {
-  const { response } = props;
+  const { response, mockButton } = props;
   const { formattedJson, parsedResponse } = useMemo(() => {
     const parsedResponse = safeJson.parse(response) || {};
     return {
@@ -19,6 +20,7 @@ export const ResponseView = (props: IResponseViewProps) => {
 
   return (
     <div className="relative p-4">
+      <div className="absolute right-6 top-20 z-10">{mockButton}</div>
       <CopyButton
         textToCopy={formattedJson}
         className="absolute right-6 top-6 z-10"

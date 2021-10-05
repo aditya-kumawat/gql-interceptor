@@ -61,6 +61,7 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
             <HeaderView
               requestHeaders={requestHeaders}
               responseHeaders={responseHeaders}
+              mockButton={mockButton}
             />
           ),
         },
@@ -74,12 +75,16 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
         {
           id: "response",
           title: "Response",
-          component: <ResponseView response={responseBody} />,
+          component: (
+            <ResponseView response={responseBody} mockButton={mockButton} />
+          ),
         },
         {
           id: "response-raw",
           title: "Response (Raw)",
-          component: <ResponseRawView response={responseBody} />,
+          component: (
+            <ResponseRawView response={responseBody} mockButton={mockButton} />
+          ),
         },
       ]}
     />

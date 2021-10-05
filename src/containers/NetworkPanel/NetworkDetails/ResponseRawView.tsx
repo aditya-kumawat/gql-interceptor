@@ -5,10 +5,11 @@ import { CopyButton } from "../../../components/CopyButton";
 
 interface IResponseRawViewProps {
   response?: string;
+  mockButton: React.ReactNode;
 }
 
 export const ResponseRawView = (props: IResponseRawViewProps) => {
-  const { response } = props;
+  const { response, mockButton } = props;
   const formattedJson = useMemo(() => {
     const parsedResponse = safeJson.parse(response) || {};
     return safeJson.stringify(parsedResponse, undefined, 2);
@@ -16,6 +17,7 @@ export const ResponseRawView = (props: IResponseRawViewProps) => {
 
   return (
     <div className="relative p-4">
+      <div className="absolute right-6 top-20 z-10">{mockButton}</div>
       <CopyButton
         textToCopy={formattedJson}
         className="absolute right-6 top-6 z-10"
