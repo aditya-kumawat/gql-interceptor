@@ -22,7 +22,6 @@ export const getInterceptionRule = (
   origin: string,
   variables?: object
 ): IMatchingRule | undefined => {
-  console.log("The local copy now is", copyOfChromeStorage.foo);
   const hash = variables ? hashPayload(variables) : "-";
   const catchAllKey = `${origin}:${operationName}:*`;
   const catchSpecificKey = `${origin}:${operationName}:${hash}`;

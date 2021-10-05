@@ -109,14 +109,13 @@ export const NetworkMock = (props: NetworkMockProps) => {
           }}
         />
         {modifyHeaders && (
-          <div className="pt-2 pl-12">
+          <div className="pt-2 pl-12 headers-editor">
             <Editor
               value={headersPayload}
               onChange={setHeadersPayload}
+              mode="code"
               navigationBar={false}
               statusBar={false}
-              search={true}
-              mode="code"
               ace={ace}
             />
           </div>
@@ -131,7 +130,7 @@ export const NetworkMock = (props: NetworkMockProps) => {
           }}
         />
         {modifyVariable && (
-          <div className="pt-2 pl-12">
+          <div className="pt-2 pl-12 variables-editor">
             <Editor
               value={variablesPayload}
               onChange={setVariablesPayload}
@@ -185,7 +184,7 @@ export const NetworkMock = (props: NetworkMockProps) => {
         </label>
       </div>
       {(responseMod === "patch" || responseMod === "replace") && (
-        <div className="pt-2 pl-16">
+        <div className="pt-2 pl-16 response-editor">
           <Editor
             value={JSON.parse(responsePayload)}
             onChange={(json: object) =>

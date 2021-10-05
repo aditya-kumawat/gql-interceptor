@@ -86,17 +86,20 @@ button {
   background: none !important;
 }
 
-.jsoneditor-menu {
+.jsoneditor-poweredBy,.jsoneditor-transform,.jsoneditor-repair,.jsoneditor-sort {
   display: none !important;
 }
-.jsoneditor-outer {
-  padding-top: 0 !important;
-  margin-top: 0 !important;
-  min-height: 150px !important;
+
+.jsoneditor-menu {
+  background-color: gray !important;
 }
-.jsoneditor {
-  border: 0 !important;
+
+.headers-editor .jsoneditor {
+  height: 200px !important;
 }
-.ace-jsoneditor {
-  height: 100% !important;
+.variables-editor .jsoneditor {
+  height: 300px !important;
+}
+.response-editor .jsoneditor {
+  height: 500px !important;
 }
