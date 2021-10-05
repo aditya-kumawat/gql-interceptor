@@ -77,10 +77,20 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
       ]}
     />
   );
+
+  const origin =
+    data.request.headers.find((header) => header.name === "origin")?.value ??
+    "http://localhost: 3000";
+
   return isMocked ? (
     <SplitPane split="vertical" defaultSize="60%">
       {tabs}
-      <NetworkMock response={responseBody} requests={requestBody} data={data} />
+      <NetworkMock
+        response={responseBody}
+        requests={requestBody}
+        data={data}
+        origin={origin}
+      />
     </SplitPane>
   ) : (
     tabs

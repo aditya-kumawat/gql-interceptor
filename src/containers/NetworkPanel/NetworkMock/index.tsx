@@ -5,11 +5,13 @@ import { useState } from "react";
 import { NetworkRequest } from "../../../hooks/useNetworkMonitor";
 import { JsonEditor as Editor } from "jsoneditor-react";
 import "jsoneditor-react/es/editor.min.css";
+import ace from "brace";
 
 type NetworkMockProps = {
   data: NetworkRequest;
   response?: string;
   requests: IGraphqlRequestBody[];
+  origin: string;
 };
 
 const mockUserSettings = {
@@ -27,25 +29,41 @@ const mockUserSettings = {
   },
 };
 
+const chrome = chromeProvider();
 export const NetworkMock = (props: NetworkMockProps) => {
-  const chrome = chromeProvider();
-  const { data, requests, response } = props;
-  const [searchInput, setSearchInput] = useState(
-    response ?? JSON.stringify(mockUserSettings)
-  );
+  const { data, requests, response, origin } = props;
+  const [searchInput, setSearchInput] = useState("");
+
+  const variables = requests[0].variables ?? {};
+  const responseJson = response ? JSON.parse(response) : {};
   const hash = requests[0].variables ? hashPayload(requests[0].variables) : "*";
 
   const operationName = data.request.primaryOperation.operationName;
 
   return (
-    <div className="flex flex-col h-full border-l border-gray-300 dark:border-gray-600">
+    <div className="flex flex-col h-full border-l border-gray-300 dark:border-gray-600 scroll overflow-y-scroll">
+      <div className="flex items-center pl-2" style={{ height: "3.5rem" }}>
+        <h2 className="font-bold">Replace variables</h2>
+      </div>
       <Editor
-        value={mockUserSettings}
+        value={variables}
+        navigationBar={false}
+        statusBar={false}
+        search={true}
+        mode="code"
+        ace={ace}
+      />
+      <div className="flex items-center pl-2" style={{ height: "3.5rem" }}>
+        <h2 className="font-bold">Patch response</h2>
+      </div>
+      <Editor
+        value={responseJson}
         onChange={(json: object) => setSearchInput(JSON.stringify(json))}
         navigationBar={false}
         statusBar={false}
         search={true}
         mode="code"
+        ace={ace}
       />
       <div style={{ margin: "20px " }}>
         <button
@@ -58,11 +76,14 @@ export const NetworkMock = (props: NetworkMockProps) => {
                 },
               },
             };
-            chrome.storage.local.set({ [`${operationName}:*`]: x }, () => {
-              console.log("Saved the settings", {
-                [`${operationName}:*`]: x,
-              });
-            });
+            chrome.storage.local.set(
+              { [`${origin}:${operationName}:*`]: x },
+              () => {
+                console.log("Saved the settings", {
+                  [`${origin}:${operationName}:*`]: x,
+                });
+              }
+            );
           }}
         >
           Replace all {operationName}
@@ -75,15 +96,15 @@ export const NetworkMock = (props: NetworkMockProps) => {
             const x: IInterceptorPayload = {
               response: {
                 replace: {
-                  payload: searchInput,
+                  payload: searchInput.trim(),
                 },
               },
             };
             chrome.storage.local.set(
-              { [`${operationName}:${hash}`]: x },
+              { [`${origin}:${operationName}:${hash}`]: x },
               () => {
                 console.log("Saved the settings", {
-                  [`${operationName}:${hash}`]: x,
+                  [`${origin}:${operationName}:${hash}`]: x,
                 });
               }
             );
@@ -98,14 +119,17 @@ export const NetworkMock = (props: NetworkMockProps) => {
           onClick={() => {
             const x: IInterceptorPayload = {
               response: {
-                patchPayload: JSON.parse(searchInput),
+                patchPayload: JSON.parse(searchInput.trim()),
               },
             };
-            chrome.storage.local.set({ [`${operationName}:*`]: x }, () => {
-              console.log("Saved the settings", {
-                [`${operationName}:*`]: x,
-              });
-            });
+            chrome.storage.local.set(
+              { [`${origin}:${operationName}:*`]: x },
+              () => {
+                console.log("Saved the settings", {
+                  [`${origin}:${operationName}:*`]: x,
+                });
+              }
+            );
           }}
         >
           Patch all {operationName}
@@ -117,14 +141,14 @@ export const NetworkMock = (props: NetworkMockProps) => {
           onClick={() => {
             const x: IInterceptorPayload = {
               response: {
-                patchPayload: JSON.parse(searchInput),
+                patchPayload: JSON.parse(searchInput.trim()),
               },
             };
             chrome.storage.local.set(
-              { [`${operationName}:${hash}`]: x },
+              { [`${origin}:${operationName}:${hash}`]: x },
               () => {
                 console.log("Saved the settings", {
-                  [`${operationName}:${hash}`]: x,
+                  [`${origin}:${operationName}:${hash}`]: x,
                 });
               }
             );

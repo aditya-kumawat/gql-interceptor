@@ -44,4 +44,9 @@ chrome.storage.local.set(
   }
 );
  */
+
+chrome.storage.local.get(null, function (items) {
+  console.log(items);
+});
+
 export {};

@@ -37,7 +37,7 @@ chrome.runtime.onMessageExternal.addListener(
             sendResponse(response);
           }
         } else {
-          sendResponse({ mockResponse: false });
+          sendResponse({ mockResponse: false, catchAllKey, catchSpecificKey });
         }
       });
     } else {

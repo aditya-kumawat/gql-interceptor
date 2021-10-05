@@ -18,6 +18,10 @@ const createRequest = ({
       url,
       headers: [
         {
+          name: "origin",
+          value: window.location.origin,
+        },
+        {
           name: "Authorization",
           value: "Bearer fe0e8768-3b2f-4f63-983d-1a74c26dde1e",
         },
