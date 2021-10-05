@@ -9,6 +9,7 @@ import { useNetworkTabs } from "../../../hooks/useNetworkTabs";
 import { CloseButton } from "../../../components/CloseButton";
 import { NetworkMock } from "../NetworkMock";
 import SplitPane from "react-split-pane";
+import { getInterceptionRule } from "@/services/interceptionRules";
 
 export type NetworkDetailsProps = {
   data: NetworkRequest;
@@ -22,21 +23,27 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
   const responseHeaders = data.response?.headers || [];
   const requestBody = data.request.body;
   const responseBody = data.response?.body;
-  const [isMocked, setIsMocked] = React.useState(false);
-  const toggleMocked = () => setIsMocked(!isMocked);
-  const mockButton = (
+  const toggleMocked = () => setIsMockPanelOpen(!isMockPanelOpen);
+  const origin =
+    data.request.headers.find((header) => header.name === "origin")?.value ??
+    "http://localhost: 3000";
+  const operationName = data.request.primaryOperation.operationName;
+  const matchingRule = getInterceptionRule(
+    operationName,
+    origin,
+    requestBody[0].variables
+  );
+  const [isMockPanelOpen, setIsMockPanelOpen] = React.useState(
+    Boolean(matchingRule)
+  );
+  const mockButton = !isMockPanelOpen && (
     <button
-      className={`${
-        !isMocked
-          ? "bg-gray-300 dark:bg-gray-600 opacity-50 hover:opacity-100"
-          : "bg-red-800"
-      } rounded-lg px-3 py-1.5 font-bold  transition-opacity`}
-      data-testid="copy-button"
+      className="bg-gray-300 dark:bg-gray-600 opacity-50 hover:opacity-100 rounded-lg px-3 py-1.5 font-bold  transition-opacity"
       onClick={() => {
         toggleMocked();
       }}
     >
-      {isMocked ? "Mocked" : "Mock"}
+      {Boolean(matchingRule) ? "Edit interception" : "Add interception"}
     </button>
   );
 
@@ -78,11 +85,7 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
     />
   );
 
-  const origin =
-    data.request.headers.find((header) => header.name === "origin")?.value ??
-    "http://localhost: 3000";
-
-  return isMocked ? (
+  return isMockPanelOpen ? (
     <SplitPane split="vertical" defaultSize="60%">
       {tabs}
       <NetworkMock
@@ -90,6 +93,11 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
         requests={requestBody}
         data={data}
         origin={origin}
+        matchingRule={matchingRule}
+        closeMock={() => {
+          setIsMockPanelOpen(false);
+          onClose();
+        }}
       />
     </SplitPane>
   ) : (

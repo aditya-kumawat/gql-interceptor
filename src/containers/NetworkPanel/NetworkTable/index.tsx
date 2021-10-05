@@ -36,9 +36,9 @@ const Operation = ({ request }: { request: NetworkRequest }) => {
     const catchSpecificKey = `${origin}:${operationName}:${hash}`;
     chrome.storage.local.get([catchAllKey, catchSpecificKey], (items) => {
       if (items[catchSpecificKey]) {
-        setMockType("mocked specific");
+        setMockType("mocked");
       } else if (items[catchAllKey]) {
-        setMockType("mocked all");
+        setMockType("mocked");
       }
     });
   }, [hash, operationName, origin]);
@@ -62,7 +62,10 @@ const Operation = ({ request }: { request: NetworkRequest }) => {
       </Badge>
 
       <span className="font-bold">
-        {operationName} {mockType}
+        {operationName}
+        {mockType ? (
+          <span className="text-red-500 ml-2 pl-2">intercepted</span>
+        ) : null}
       </span>
 
       <div>

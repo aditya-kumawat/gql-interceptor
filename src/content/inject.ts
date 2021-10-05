@@ -23,6 +23,8 @@ window.fetch = (...args) => {
             resolve({
               text: () => Promise.resolve(messageResponse.mockResponse),
             } as any);
+            // Make the call so that it shows up on network tab
+            _fetch.apply(window, args);
           } else {
             try {
               let body = args[1]?.body;

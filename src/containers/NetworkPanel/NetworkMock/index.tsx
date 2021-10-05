@@ -7,33 +7,59 @@ import { JsonEditor as Editor } from "jsoneditor-react";
 import "jsoneditor-react/es/editor.min.css";
 import ace from "brace";
 import { Checkbox } from "@/components/Checkbox";
+import {
+  IMatchingRule,
+  refershLocalCopyOfChromeStorage,
+} from "@/services/interceptionRules";
 
 type NetworkMockProps = {
   data: NetworkRequest;
   response?: string;
   requests: IGraphqlRequestBody[];
   origin: string;
+  matchingRule?: IMatchingRule;
+  closeMock: () => void;
 };
 
 const chrome = chromeProvider();
 export const NetworkMock = (props: NetworkMockProps) => {
-  const { data, requests, response, origin } = props;
-  const [responsePayload, setResponsePayload] = useState("");
-  const [variablesPayload, setVariablesPayload] = useState(
-    requests[0].variables ?? {}
+  const { data, requests, response, origin, matchingRule, closeMock } = props;
+  const [responsePayload, setResponsePayload] = useState(
+    (matchingRule?.rule.response?.patchPayload
+      ? JSON.stringify(matchingRule?.rule.response?.patchPayload)
+      : undefined) ||
+      (matchingRule?.rule.response?.replace?.payload
+        ? matchingRule?.rule.response?.replace?.payload
+        : undefined) ||
+      response ||
+      "{}"
   );
-  const [interceptType, setInterceptType] = useState("all");
+  const [variablesPayload, setVariablesPayload] = useState(
+    matchingRule?.rule.request?.payload
+      ? JSON.parse(matchingRule?.rule.request?.payload)
+      : requests[0].variables ?? {}
+  );
+  const [interceptType, setInterceptType] = useState<string>(
+    matchingRule?.type || "all"
+  );
   const onChangeInterceptRadio = (event: React.ChangeEvent<HTMLInputElement>) =>
     setInterceptType(event.target.value);
-  const [responseMod, setResponseMod] = useState("doNotModify");
+  const [responseMod, setResponseMod] = useState(
+    Boolean(matchingRule?.rule.response?.patchPayload)
+      ? "patch"
+      : Boolean(matchingRule?.rule.response?.replace)
+      ? "replace"
+      : "doNotModify"
+  );
   const onChangeResponseModRadio = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => setResponseMod(event.target.value);
   const [modifyVariable, setModifyVariables] = useState(false);
   const [modifyHeaders, setModifyHeaders] = useState(false);
-  const [headersPayload, setHeadersPayload] = useState({});
+  const [headersPayload, setHeadersPayload] = useState(
+    matchingRule?.rule.request?.appendHeaders || {}
+  );
 
-  const responseJson = response ? JSON.parse(response) : {};
   const hash = requests[0].variables ? hashPayload(requests[0].variables) : "*";
 
   const operationName = data.request.primaryOperation.operationName;
@@ -161,7 +187,7 @@ export const NetworkMock = (props: NetworkMockProps) => {
       {(responseMod === "patch" || responseMod === "replace") && (
         <div className="pt-2 pl-16">
           <Editor
-            value={responseJson}
+            value={JSON.parse(responsePayload)}
             onChange={(json: object) =>
               setResponsePayload(JSON.stringify(json))
             }
@@ -208,12 +234,31 @@ export const NetworkMock = (props: NetworkMockProps) => {
                 console.log("Saved the settings", {
                   [`${origin}:${operationName}:${key}`]: interceptorPayload,
                 });
+                refershLocalCopyOfChromeStorage();
+                closeMock();
               }
             );
           }}
         >
           Save
         </button>
+        {matchingRule && (
+          <button
+            className="ml-4 bg-red-500 dark:bg-red-600 rounded-lg px-3 py-1.5 font-bold opacity-80 hover:opacity-100 transition-opacity disabled:opacity-40"
+            onClick={() => {
+              const key = matchingRule.type === "all" ? "*" : hash;
+              chrome.storage.local.remove(
+                `${origin}:${operationName}:${key}`,
+                () => {
+                  refershLocalCopyOfChromeStorage();
+                  closeMock();
+                }
+              );
+            }}
+          >
+            Delete
+          </button>
+        )}
       </div>
     </div>
   );
