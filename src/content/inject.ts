@@ -1,5 +1,5 @@
 import { IResponse } from "./types";
-import merge from "lodash/merge";
+import mergeWith from "lodash/mergeWith";
 
 const _fetch = window.fetch;
 // The ID of the extension we want to talk to.
@@ -75,9 +75,14 @@ window.fetch = (...args) => {
                     text: () =>
                       Promise.resolve(
                         JSON.stringify(
-                          merge(
+                          mergeWith(
                             parsedApiResponse,
-                            messageResponse.patchResponse
+                            messageResponse.patchResponse,
+                            (out, src) => {
+                              if (Array.isArray(src)) {
+                                return [...out, ...src];
+                              }
+                            }
                           )
                         )
                       ),
