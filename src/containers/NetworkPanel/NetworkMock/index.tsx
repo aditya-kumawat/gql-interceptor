@@ -191,7 +191,9 @@ export const NetworkMock = (props: NetworkMockProps) => {
 
             if (responseMod === "replace") {
               interceptorPayload.response = {
-                replace: JSON.parse(responsePayload),
+                replace: {
+                  payload: responsePayload,
+                },
               };
             }
             if (responseMod === "patch") {
