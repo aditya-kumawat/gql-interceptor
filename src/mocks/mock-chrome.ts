@@ -5,7 +5,26 @@ let removeListeners: Record<string, () => void> = {};
 export const mockChrome = {
   storage: {
     local: {
-      set: (payload, cb) => cb?.(),
+      set: (payload, cb) => {
+        const [key, value] = Object.entries(payload)[0];
+        // console.log(key, value);
+        localStorage.setItem(key, JSON.stringify(value));
+        cb?.();
+      },
+      get: (keys: string[] | null, cb) => {
+        if (keys === null) cb?.(localStorage);
+        else {
+          const obj = keys.reduce((out, key) => {
+            const value = localStorage.getItem(key);
+            if (value) out[key] = JSON.parse(value);
+            return out;
+          }, {} as Record<string, any>);
+          cb?.(obj);
+        }
+      },
+      remove: (id: string) => {
+        localStorage.removeItem(id);
+      },
     },
   },
   devtools: {

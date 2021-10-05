@@ -8,6 +8,8 @@ import { getStatusColor } from "../../../helpers/getStatusColor";
 import { NetworkRequest } from "../../../hooks/useNetworkMonitor";
 import { useKeyDown } from "../../../hooks/useKeyDown";
 import { getErrorMessages } from "../../../helpers/graphqlHelpers";
+import { chromeProvider } from "@/services/chromeProvider";
+import { hashPayload } from "@/extension.utils";
 
 export type NetworkTableProps = {
   data: NetworkRequest[];
@@ -17,9 +19,29 @@ export type NetworkTableProps = {
   showSingleColumn?: boolean;
 };
 
+const chrome = chromeProvider();
 const Operation = ({ request }: { request: NetworkRequest }) => {
   const totalOperations = request.request.body.length;
   const { operation, operationName } = request.request.primaryOperation;
+  const [mockType, setMockType] = React.useState<string>();
+
+  const origin =
+    request.request.headers.find((header) => header.name === "origin")?.value ??
+    "http://localhost: 3000";
+  const hash = request.request.body[0]?.variables
+    ? hashPayload(request.request.body[0]?.variables)
+    : "-";
+  React.useEffect(() => {
+    const catchAllKey = `${origin}:${operationName}:*`;
+    const catchSpecificKey = `${origin}:${operationName}:${hash}`;
+    chrome.storage.local.get([catchAllKey, catchSpecificKey], (items) => {
+      if (items[catchSpecificKey]) {
+        setMockType("mocked specific");
+      } else if (items[catchAllKey]) {
+        setMockType("mocked all");
+      }
+    });
+  }, [hash, operationName, origin]);
 
   const responseBody = request.response?.body;
   const errorMessages = useMemo(
@@ -39,7 +61,9 @@ const Operation = ({ request }: { request: NetworkRequest }) => {
         </span>
       </Badge>
 
-      <span className="font-bold">{operationName}</span>
+      <span className="font-bold">
+        {operationName} {mockType}
+      </span>
 
       <div>
         {totalOperations > 1 && (
@@ -87,22 +111,6 @@ const Time = ({ ms }: { ms: number }) => {
 export const NetworkTable = (props: NetworkTableProps) => {
   const { data, onRowClick, onRowSelect, selectedRowId, showSingleColumn } =
     props;
-
-  const selectNextRow = (direction: "up" | "down") => {
-    const directionCount = direction === "up" ? -1 : 1;
-    const selectedRowIndex = data.findIndex((row) => row.id === selectedRowId);
-    const nextRow = data[selectedRowIndex + directionCount];
-    if (nextRow) {
-      onRowSelect(nextRow.id);
-    }
-  };
-
-  // useKeyDown("ArrowUp", () => {
-  //   selectNextRow("up");
-  // });
-  // useKeyDown("ArrowDown", () => {
-  //   selectNextRow("down");
-  // });
 
   const columns = useMemo(() => {
     const columns: TableProps<NetworkRequest>["columns"] = [

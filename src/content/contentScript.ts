@@ -10,6 +10,7 @@ const injectScripts = (callback: () => void) => {
   interceptorScript.type = "text/javascript";
   interceptorScript.id = "interceptor";
   interceptorScript.onload = callback;
+
   if (!document.getElementById("interceptor")) {
     (document.head || document.documentElement).appendChild(interceptorScript);
   } else {
@@ -44,9 +45,5 @@ chrome.storage.local.set(
   }
 );
  */
-
-chrome.storage.local.get(null, function (items) {
-  console.log(items);
-});
 
 export {};

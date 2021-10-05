@@ -14,21 +14,6 @@ type NetworkMockProps = {
   origin: string;
 };
 
-const mockUserSettings = {
-  data: {
-    userSettings: {
-      settings: [
-        {
-          setting: "APP_THEME",
-          value: '"BRIGHT"',
-          __typename: "UserSetting",
-        },
-      ],
-      __typename: "UserSettings",
-    },
-  },
-};
-
 const chrome = chromeProvider();
 export const NetworkMock = (props: NetworkMockProps) => {
   const { data, requests, response, origin } = props;
