@@ -85,13 +85,8 @@ const Time = ({ ms }: { ms: number }) => {
 };
 
 export const NetworkTable = (props: NetworkTableProps) => {
-  const {
-    data,
-    onRowClick,
-    onRowSelect,
-    selectedRowId,
-    showSingleColumn,
-  } = props;
+  const { data, onRowClick, onRowSelect, selectedRowId, showSingleColumn } =
+    props;
 
   const selectNextRow = (direction: "up" | "down") => {
     const directionCount = direction === "up" ? -1 : 1;
@@ -102,12 +97,12 @@ export const NetworkTable = (props: NetworkTableProps) => {
     }
   };
 
-  useKeyDown("ArrowUp", () => {
-    selectNextRow("up");
-  });
-  useKeyDown("ArrowDown", () => {
-    selectNextRow("down");
-  });
+  // useKeyDown("ArrowUp", () => {
+  //   selectNextRow("up");
+  // });
+  // useKeyDown("ArrowDown", () => {
+  //   selectNextRow("down");
+  // });
 
   const columns = useMemo(() => {
     const columns: TableProps<NetworkRequest>["columns"] = [

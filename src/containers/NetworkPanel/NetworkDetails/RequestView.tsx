@@ -7,6 +7,7 @@ import { IGraphqlRequestBody } from "../../../helpers/graphqlHelpers";
 
 interface IRequestViewProps {
   requests: IGraphqlRequestBody[];
+  mockButton: React.ReactNode;
 }
 
 const isVariablesPopulated = (request: IGraphqlRequestBody) => {
@@ -14,13 +15,14 @@ const isVariablesPopulated = (request: IGraphqlRequestBody) => {
 };
 
 export const RequestView = (props: IRequestViewProps) => {
-  const { requests } = props;
+  const { requests, mockButton } = props;
 
   return (
     <Panels>
       {requests.map((request) => {
         return (
           <PanelSection key={request.query} className="relative">
+            <div className="absolute right-6 top-20 z-10">{mockButton}</div>
             <CopyButton
               textToCopy={request.query}
               className="absolute right-6 top-6 z-10"

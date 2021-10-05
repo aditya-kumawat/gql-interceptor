@@ -1,9 +1,10 @@
 import { hashPayload, IInterceptorPayload } from "@/extension.utils";
 import { IGraphqlRequestBody } from "@/helpers/graphqlHelpers";
 import { chromeProvider } from "@/services/chromeProvider";
-import React, { useState } from "react";
-import { Textfield } from "../../../components/Textfield";
+import { useState } from "react";
 import { NetworkRequest } from "../../../hooks/useNetworkMonitor";
+import { JsonEditor as Editor } from "jsoneditor-react";
+import "jsoneditor-react/es/editor.min.css";
 
 type NetworkMockProps = {
   data: NetworkRequest;
@@ -37,17 +38,15 @@ export const NetworkMock = (props: NetworkMockProps) => {
   const operationName = data.request.primaryOperation.operationName;
 
   return (
-    <div className="p-2">
-      <div style={{ margin: "10px" }}>
-        <Textfield
-          value={searchInput}
-          onChange={setSearchInput}
-          placeholder="Search full request"
-          autoFocus
-          className="w-full"
-          testId="search-input"
-        />
-      </div>
+    <div className="flex flex-col h-full border-l border-gray-300 dark:border-gray-600">
+      <Editor
+        value={mockUserSettings}
+        onChange={(json: object) => setSearchInput(JSON.stringify(json))}
+        navigationBar={false}
+        statusBar={false}
+        search={true}
+        mode="code"
+      />
       <div style={{ margin: "20px " }}>
         <button
           className="bg-gray-300 dark:bg-gray-600 rounded-lg px-3 py-1.5 font-bold opacity-50 hover:opacity-100 transition-opacity"

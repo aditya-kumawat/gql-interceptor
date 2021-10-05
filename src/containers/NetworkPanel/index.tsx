@@ -80,6 +80,7 @@ export const NetworkPanel = (props: NetworkPanelProps) => {
             style={{ minWidth: 200 }}
           >
             <NetworkDetails
+              key={JSON.stringify(selectedRequest)}
               data={selectedRequest}
               onClose={() => {
                 setSelectedRowId(null);

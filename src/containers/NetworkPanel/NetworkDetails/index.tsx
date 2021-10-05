@@ -8,6 +8,7 @@ import { ResponseRawView } from "./ResponseRawView";
 import { useNetworkTabs } from "../../../hooks/useNetworkTabs";
 import { CloseButton } from "../../../components/CloseButton";
 import { NetworkMock } from "../NetworkMock";
+import SplitPane from "react-split-pane";
 
 export type NetworkDetailsProps = {
   data: NetworkRequest;
@@ -21,8 +22,25 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
   const responseHeaders = data.response?.headers || [];
   const requestBody = data.request.body;
   const responseBody = data.response?.body;
+  const [isMocked, setIsMocked] = React.useState(false);
+  const toggleMocked = () => setIsMocked(!isMocked);
+  const mockButton = (
+    <button
+      className={`${
+        !isMocked
+          ? "bg-gray-300 dark:bg-gray-600 opacity-50 hover:opacity-100"
+          : "bg-red-800"
+      } rounded-lg px-3 py-1.5 font-bold  transition-opacity`}
+      data-testid="copy-button"
+      onClick={() => {
+        toggleMocked();
+      }}
+    >
+      {isMocked ? "Mocked" : "Mock"}
+    </button>
+  );
 
-  return (
+  const tabs = (
     <Tabs
       testId="network-tabs"
       activeTab={activeTab}
@@ -42,7 +60,9 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
         {
           id: "request",
           title: "Request",
-          component: <RequestView requests={requestBody} />,
+          component: (
+            <RequestView requests={requestBody} mockButton={mockButton} />
+          ),
         },
         {
           id: "response",
@@ -54,18 +74,15 @@ export const NetworkDetails = (props: NetworkDetailsProps) => {
           title: "Response (Raw)",
           component: <ResponseRawView response={responseBody} />,
         },
-        {
-          id: "mock-data",
-          title: "Mock",
-          component: (
-            <NetworkMock
-              response={responseBody}
-              requests={requestBody}
-              data={data}
-            />
-          ),
-        },
       ]}
     />
+  );
+  return isMocked ? (
+    <SplitPane split="vertical" defaultSize="60%">
+      {tabs}
+      <NetworkMock response={responseBody} requests={requestBody} data={data} />
+    </SplitPane>
+  ) : (
+    tabs
   );
 };
